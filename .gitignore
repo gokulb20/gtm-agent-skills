@@ -1,0 +1,32 @@
+# Dev artifacts
+Fixes/
+*.zip
+*.txt
+change_v1.md
+CLAUDE.md
+AGENTS.md
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment files (secrets)
+.env
+function-*/.env
+
+# Node modules (if any)
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
