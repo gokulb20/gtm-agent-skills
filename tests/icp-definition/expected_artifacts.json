@@ -1,0 +1,16 @@
+{
+  "icp_scorecard": {
+    "dimensions": ["Pain severity", "Trigger strength", "Willingness to pay", "Reachability", "Time to value", "Strategic fit"],
+    "weights": [25, 20, 20, 15, 10, 10],
+    "tier_cutoffs": {"tier_1": 75, "tier_2": 55, "tier_3": 40, "anti_icp": 40}
+  },
+  "firmographic": {
+    "industry": "SaaS",
+    "employee_size": "100-300",
+    "geography": "United States"
+  },
+  "roles": ["Buyer", "Champion", "User", "Blocker"],
+  "anti_icp_lenses": 4,
+  "trigger_library_count": "5-10",
+  "sdr_handoff": "1-page qualification doc usable in 2 minutes"
+}

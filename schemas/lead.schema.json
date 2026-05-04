@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GTM Lead Record",
+  "description": "Canonical lead record schema for the GTM Agent Skills system. All sourcing skills normalize to this shape. Data-enrichment decorates it. Lead-scoring writes scoring fields onto it.",
+  "type": "object",
+  "required": ["lead_id", "contact_name", "company", "company_domain", "signals"],
+  "properties": {
+    "lead_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Internal ID. Generated at first push."
+    },
+    "linkedin_url": {
+      "type": ["string", "null"],
+      "description": "Primary merge key for person dedup. Most stable identifier."
+    },
+    "email": {
+      "type": ["string", "null"],
+      "format": "email",
+      "description": "Secondary merge key."
+    },
+    "phone": {
+      "type": ["string", "null"],
+      "description": "Tertiary merge key (mobile preferred)."
+    },
+    "email_status": {
+      "type": ["string", "null"],
+      "enum": ["unverified", "verified", "risky", "role-based", "invalid", "catch-all-domain", null],
+      "description": "Verification status of email."
+    },
+    "phone_status": {
+      "type": ["string", "null"],
+      "enum": ["unverified", "verified", "mobile", "landline", "voip", "dnc", null],
+      "description": "Verification status of phone."
+    },
+    "contact_name": {
+      "type": "string",
+      "description": "Full name as captured."
+    },
+    "contact_first_name": {
+      "type": ["string", "null"]
+    },
+    "contact_last_name": {
+      "type": ["string", "null"]
+    },
+    "title_raw": {
+      "type": "string",
+      "description": "The string the source returned. Preserve verbatim."
+    },
+    "title_normalized": {
+      "type": "string",
+      "description": "Stripped, deduped title."
+    },
+    "seniority": {
+      "type": ["string", "null"],
+      "enum": ["c-level", "vp", "director", "manager", "ic", "intern", "unknown", null]
+    },
+    "function": {
+      "type": ["string", "null"],
+      "enum": ["sales", "marketing", "engineering", "ops", "hr", "finance", "support", "legal", "product", "executive", "other", null]
+    },
+    "linkedin_headline": {
+      "type": ["string", "null"],
+      "description": "Powers personalization hooks."
+    },
+    "company": {
+      "type": "string",
+      "description": "Display name."
+    },
+    "company_domain": {
+      "type": "string",
+      "description": "Primary merge key for company dedup. Apex domain only."
+    },
+    "company_size_band": {
+      "type": ["string", "null"],
+      "enum": ["1-10", "11-50", "51-200", "201-500", "501-1000", "1001-5000", "5001+", null]
+    },
+    "company_size_exact": {
+      "type": ["integer", "null"]
+    },
+    "company_industry_normalized": {
+      "type": "string",
+      "description": "Maps to Apollo's industry taxonomy as canonical reference."
+    },
+    "company_location": {
+      "type": "string",
+      "description": "City, State, Country preferred."
+    },
+    "company_founded_year": {
+      "type": ["integer", "null"]
+    },
+    "company_revenue_band": {
+      "type": ["string", "null"],
+      "enum": ["<1M", "1-10M", "10-50M", "50-250M", "250M+", null]
+    },
+    "company_funding_stage": {
+      "type": ["string", "null"],
+      "enum": ["bootstrapped", "seed", "series-a", "series-b", "series-c", "series-d", "public", "acquired", null]
+    },
+    "company_tech_stack": {
+      "type": ["array", "null"],
+      "items": {"type": "string"}
+    },
+    "signals": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["type", "source", "date", "strength"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["funding", "hiring", "leadership-change", "tech-adoption", "review", "job-post", "press", "competitor-mention", "rfp", "other"]
+          },
+          "source": {
+            "type": "string",
+            "description": "e.g. crunchbase, linkedin-job-post, g2-review"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "When the signal occurred, NOT when we found it."
+          },
+          "evidence_url": {
+            "type": ["string", "null"],
+            "format": "uri"
+          },
+          "strength": {
+            "type": "string",
+            "enum": ["strong", "medium", "weak"]
+          },
+          "half_life_days": {
+            "type": ["integer", "null"]
+          },
+          "detail": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "personalization_hook": {
+      "type": ["string", "null"],
+      "description": "One sentence, dated, source-attributed."
+    },
+    "trigger_events": {
+      "type": ["array", "null"],
+      "items": {"type": "string"},
+      "description": "References to entries in the ICP trigger library."
+    },
+    "icp_tier": {
+      "type": ["string", "null"],
+      "enum": ["tier-1", "tier-2", "tier-3", "anti-icp", null]
+    },
+    "icp_score": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "maximum": 100
+    },
+    "score_rationale": {
+      "type": ["object", "null"],
+      "description": "Per-dimension breakdown: Pain/Trigger/WTP/Reach/TTV/Strategic."
+    },
+    "bant_status": {
+      "type": ["object", "null"],
+      "properties": {
+        "budget": {"type": "string", "enum": ["confirmed", "inferred", "unknown"]},
+        "authority": {"type": "string", "enum": ["confirmed", "inferred", "unknown"]},
+        "need": {"type": "string", "enum": ["confirmed", "inferred", "unknown"]},
+        "timing": {"type": "string", "enum": ["confirmed", "inferred", "unknown"]}
+      }
+    },
+    "champ_status": {
+      "type": ["object", "null"],
+      "properties": {
+        "challenges": {"type": "string", "enum": ["confirmed", "inferred", "unknown"]},
+        "authority": {"type": "string", "enum": ["confirmed", "inferred", "unknown"]},
+        "money": {"type": "string", "enum": ["confirmed", "inferred", "unknown"]},
+        "prioritization": {"type": "string", "enum": ["confirmed", "inferred", "unknown"]}
+      }
+    },
+    "priority": {
+      "type": ["string", "null"],
+      "enum": ["hot", "warm", "cold", null]
+    },
+    "score_freshness_date": {
+      "type": ["string", "null"],
+      "format": "date"
+    },
+    "provenance_company": {
+      "type": ["string", "null"],
+      "enum": ["user-provided", "verified", "hypothetical", "unverified", null]
+    },
+    "provenance_person": {
+      "type": ["string", "null"],
+      "enum": ["user-provided", "verified", "hypothetical", "unverified", null]
+    },
+    "provenance_email": {
+      "type": ["string", "null"],
+      "enum": ["user-provided", "verified", "hypothetical", "unverified", null]
+    },
+    "provenance_phone": {
+      "type": ["string", "null"],
+      "enum": ["user-provided", "verified", "hypothetical", "unverified", null]
+    },
+    "source": {
+      "type": "string",
+      "description": "e.g. apollo-api, apollo-csv-export, linkedin-sales-nav-csv, byo-csv, clay-table"
+    },
+    "source_run_id": {
+      "type": ["string", "null"],
+      "format": "uuid"
+    },
+    "source_query": {
+      "type": ["string", "object", "null"],
+      "description": "The exact filter set used. Reproducible."
+    },
+    "freshness_date": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "When last seen alive at source."
+    }
+  }
+}
