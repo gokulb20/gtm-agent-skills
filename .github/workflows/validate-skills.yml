@@ -1,0 +1,46 @@
+name: Validate GTM Skills
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate all skills
+        run: bash tests/run.sh
+
+      - name: Validate JSON schemas
+        run: |
+          python3 -c "import json; json.load(open('schemas/lead.schema.json'))"
+          python3 -c "import json; json.load(open('graph.json'))"
+
+      - name: Check graph.json skill references
+        run: |
+          python3 -c "
+          import json, glob
+          graph = json.load(open('graph.json'))
+          skill_dirs = []
+          for cat in ['intelligence','lead-gen','outreach','conversations','pipeline','analytics']:
+              for d in glob.glob(f'{cat}/*/SKILL.md'):
+                  skill_dirs.append(d.split('/')[1])
+          graph_ids = [n['id'] for n in graph['nodes']]
+          missing = set(graph_ids) - set(skill_dirs)
+          extra = set(skill_dirs) - set(graph_ids)
+          if missing:
+              print(f'graph.json references skills not found: {missing}')
+              exit(1)
+          if extra:
+              print(f'skills not in graph.json: {extra}')
+              exit(1)
+          print(f'All {len(skill_dirs)} skills verified in graph.json')
+          "

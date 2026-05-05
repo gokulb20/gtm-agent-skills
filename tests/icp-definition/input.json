@@ -1,0 +1,14 @@
+{
+  "product_description": "AI-powered knowledge base for support teams",
+  "beachhead_segment": "Series B SaaS companies with 100-300 employees",
+  "geography": "United States",
+  "pricing_model": "Per-seat SaaS",
+  "acv_range": "$3,000-$5,000",
+  "sales_motion": "sales-led",
+  "won_deals": [
+    {"company": "Stitchbox", "role": "VP of Support", "acv": 4800},
+    {"company": "Paymet", "role": "Director of Customer Success", "acv": 3600},
+    {"company": "Plant", "role": "Head of Support Operations", "acv": 4200},
+    {"company": "Dovere", "role": "VP of Customer Experience", "acv": 5000}
+  ]
+}
